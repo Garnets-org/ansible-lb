@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Taye’s Load Balancer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-light: #f5f5f5;
+      --bg-dark: #1e1e1e;
+      --text-light: #2c3e50;
+      --text-dark: #eee;
+      --card-light: #fff;
+      --card-dark: #2a2a2a;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      margin: 0;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .dark-mode {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    .section {
+      background: var(--card-light);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .dark-mode .section {
+      background: var(--card-dark);
+    }
+
+    .toast {
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .toast-success {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .toast-warning {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    li {
+      padding: 4px 0;
+      font-size: 1.1em;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    button.toggle-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: #ccc;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <h1>Taye’s Load Balancer</h1>
+    <button class="toggle-btn" onclick="toggleTheme()">🌗 Toggle Theme</button>
+  </div>
+
+  {% if online_servers|length == all_servers|length %}
+    <div class="toast toast-success">✅ All servers are online</div>
+  {% elif online_servers %}
+    <div class="toast toast-warning">⚠ Some servers are down</div>
+  {% else %}
+    <div class="toast toast-warning">🚨 No servers are reachable</div>
+  {% endif %}
+
+  <div class="section">
+    <h2>Hello from: {{ app_name }} ({{ hostname }})</h2>
+    <p>This server is online and responding to traffic.</p>
+    <p><strong>Container IP Address:</strong> {{ ip }}</p>
+    <p><strong>Timestamp:</strong> {{ timestamp }}</p>
+  </div>
+
+  <div class="section">
+    <h3>🟢 Active Upstream Servers</h3>
+    {% if online_servers %}
+      <ul>
+        {% for srv in online_servers %}
+          <li>🟢 {{ srv }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No servers currently online.</p>
+    {% endif %}
+  </div>
+
+  <div class="section">
+    <h3>🔘 All Registered Servers</h3>
+    <ul>
+      {% for srv in all_servers %}
+        <li>{% if srv in online_servers %}🟢{% else %}🔴{% endif %} {{ srv }}</li>
+      {% endfor %}
+    </ul>
+    <p><small>Last refreshed at {{ timestamp }}</small></p>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    }
+
+    // Apply saved theme on load
+    window.onload = function() {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+      }
+
+      // Auto-refresh every 10 seconds
+      setTimeout(() => {
+        window.location.reload();
+      }, 10000);
+    }
+  </script>
+</body>
+</html>
+

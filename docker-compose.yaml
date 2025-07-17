@@ -4,28 +4,43 @@ services:
     container_name: app1
     ports:
       - "6001:5000"
+    environment:
+      - APP_NAME=app1
+      - ALL_SERVERS=app1:5000,app2:5000,app3:5000,app4:5000,app5:5000
 
   app2:
     build: ./upstream-apps
     container_name: app2
     ports:
       - "6002:5000"
+    environment:
+      - APP_NAME=app2
+      - ALL_SERVERS=app1:5000,app2:5000,app3:5000,app4:5000,app5:5000 
 
   app3:
     build: ./upstream-apps
     container_name: app3
     ports:
       - "6003:5000"
+    environment:
+      - APP_NAME=app3
+      - ALL_SERVERS=app1:5000,app2:5000,app3:5000,app4:5000,app5:5000  
 
   app4:
     build: ./upstream-apps
     container_name: app4
     ports:
       - "6004:5000"
+    environment:
+      - APP_NAME=app4
+      - ALL_SERVERS=app1:5000,app2:5000,app3:5000,app4:5000,app5:5000
 
   app5:
     build: ./upstream-apps
     container_name: app5
     ports:
       - "6005:5000"
+    environment:
+      - APP_NAME=app5
+      - ALL_SERVERS=app1:5000,app2:5000,app3:5000,app4:5000,app5:5000
 
